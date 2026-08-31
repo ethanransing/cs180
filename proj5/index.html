@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project 5 — CS 180</title>
+  <meta name="description" content="Project 5: Fun With Diffusion Models">
+
+  <!-- Set theme before paint to avoid a flash -->
+  <script>
+    (function () {
+      var t = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+    <!-- shown in light mode: click for dark -->
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+    </svg>
+    <!-- shown in dark mode: click for light -->
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/>
+    </svg>
+  </button>
+
+  <main>
+
+    <a class="back" href="../">&#8592; Ethan Ransing</a>
+
+    <header>
+      <h1 class="page-title">Project 5</h1>
+      <p class="page-meta">Fun With Diffusion Models</p>
+    </header>
+
+    <section>
+      <h2>Overview</h2>
+      <p>Write-up goes here.</p>
+    </section>
+
+    <section>
+      <h2>Approach</h2>
+      <p>Describe the method here. Inline <code>code</code> looks like this.</p>
+    </section>
+
+    <section>
+      <h2>Results</h2>
+
+      <!-- Side-by-side figures; drop images in ../images/ -->
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/placeholder.svg" alt="">
+          <figcaption>Caption.</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/placeholder.svg" alt="">
+          <figcaption>Caption.</figcaption>
+        </figure>
+      </div>
+
+      <!-- A single full-width figure -->
+      <figure>
+        <img src="../images/placeholder.svg" alt="">
+        <figcaption>Caption.</figcaption>
+      </figure>
+    </section>
+
+  </main>
+
+  <script src="../script.js"></script>
+</body>
+</html>

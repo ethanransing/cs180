@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethan Ransing — CS 180</title>
+  <meta name="description" content="CS 180 project pages by Ethan Ransing.">
+
+  <!-- Set theme before paint to avoid a flash -->
+  <script>
+    (function () {
+      var t = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+    <!-- shown in light mode: click for dark -->
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+    </svg>
+    <!-- shown in dark mode: click for light -->
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/>
+    </svg>
+  </button>
+
+  <main>
+
+    <header class="intro">
+      <div class="intro-text">
+        <h1>Ethan Ransing</h1>
+        <p class="entry-meta">CS 180: Intro to Computer Vision and Computational Photography</p>
+        <nav class="links">
+          <a href="mailto:ethan.ransing@berkeley.edu">Email</a>
+          <a href="https://github.com/ethanransing" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://ethanransing.github.io/" target="_blank" rel="noopener">Personal site</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ===== Projects =====
+      To add a project: copy one <li> below and duplicate a project folder
+      (e.g. `cp -r proj1 proj7`), then edit that folder's index.html. -->
+    <section>
+      <h2>Projects</h2>
+
+      <ul class="project-list">
+        <li>
+          <h3 class="project-title"><a href="proj1/">Project 1</a></h3>
+          <p class="project-desc">Images of the Russian Empire: Colorizing the Prokudin-Gorskii Photo Collection</p>
+        </li>
+        <li>
+          <h3 class="project-title"><a href="proj2/">Project 2</a></h3>
+          <p class="project-desc">Fun with Filters and Frequencies</p>
+        </li>
+        <li>
+          <h3 class="project-title"><a href="proj3/">Project 3</a></h3>
+          <p class="project-desc">Face Morphing</p>
+        </li>
+        <li>
+          <h3 class="project-title"><a href="proj4/">Project 4</a></h3>
+          <p class="project-desc">Image Warping and Mosaicing</p>
+        </li>
+        <li>
+          <h3 class="project-title"><a href="proj5/">Project 5</a></h3>
+          <p class="project-desc">Fun With Diffusion Models</p>
+        </li>
+        <li>
+          <h3 class="project-title"><a href="final/">Final Project</a></h3>
+          <p class="project-desc">TBD</p>
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
