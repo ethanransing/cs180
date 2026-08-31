@@ -330,6 +330,29 @@ figcaption {
 }
 .figure-grid figure { margin: 0; }
 
+/* A centered row of small figures. Sizing by height rather than width keeps
+   landscape and portrait shots at the same visual weight side by side. */
+.figure-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.figure-row figure {
+  margin: 0;
+  text-align: center;
+}
+
+.figure-row img {
+  width: auto;
+  height: 480px;
+  max-width: 100%;
+}
+
 @media (max-width: 560px) {
   .figure-grid { grid-template-columns: 1fr; }
+  .figure-row img { height: 170px; }
 }
