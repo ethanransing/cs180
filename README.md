@@ -18,22 +18,17 @@ proj0/ …        one folder per project, each with an index.html
 
 ## Publishing
 
-Site URL: **https://ethanransing-cs180.github.io/**
+Site URL: **https://ethanransing.github.io/cs180/**
 
-That is a *user/org* Pages domain, so it requires a GitHub account or
-organization literally named `ethanransing-cs180`, holding a repo named
-`ethanransing-cs180.github.io`. A free organization is the easy way:
+A project site under the personal account: a repo named `cs180` owned by
+`ethanransing`. The site is plain static files, so there is no build step.
 
-1. Create the org at https://github.com/organizations/plan (name:
-   `ethanransing-cs180`).
-2. Create the repo and push:
+```
+gh repo create ethanransing/cs180 --public --source=. --push
+```
 
-   ```
-   gh repo create ethanransing-cs180/ethanransing-cs180.github.io \
-       --public --source=. --push
-   ```
+Then Settings -> Pages -> Source: **Deploy from a branch**, branch `main`,
+folder `/ (root)`.
 
-3. Settings -> Pages -> Source: **Deploy from a branch**, branch `main`,
-   folder `/ (root)`.
-
-The site is plain static files, so there is no build step.
+All links in the site are relative (`proj0/`, `../styles.css`), so it works
+under the `/cs180/` subpath without any base-URL configuration.
