@@ -286,6 +286,49 @@ code {
   margin: 0;
 }
 
+/* Arrow marking the most recent non-empty project; added by script.js. It sits
+   in the left gutter so it never shifts the list's text alignment. */
+.project-list .project-title { position: relative; }
+
+.latest-marker {
+  position: absolute;
+  left: -46px;
+  /* Centre on the title's own line box, so it stays aligned whatever the
+     title's font-size is. */
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 1.95rem;
+  line-height: 1;
+  font-weight: 400;
+}
+
+/* Projects that have real content: slightly larger than the empty ones. */
+.project-list li:not(.is-template) .project-title { font-size: 1.2rem; }
+
+/* Projects with nothing on their page yet; class added by script.js. A fainter
+   gray than --muted, defined per theme so the copied palette stays untouched. */
+.project-list li.is-template .project-title a,
+.project-list li.is-template .project-desc { color: #a8a8a8; }
+:root[data-theme="dark"] .project-list li.is-template .project-title a,
+:root[data-theme="dark"] .project-list li.is-template .project-desc { color: #6b6b6b; }
+
+.project-list li.is-template .project-title a:hover,
+:root[data-theme="dark"] .project-list li.is-template .project-title a:hover {
+  color: var(--text);
+}
+
+/* Below this width the 920px column stops leaving room in the left margin for
+   an outdented arrow, so it sits inline before the title instead of clipping. */
+@media (max-width: 1020px) {
+  .latest-marker {
+    position: static;
+    transform: none;
+    margin-right: 8px;
+    vertical-align: -0.18em;
+  }
+}
+
 /* ===== Project pages ===== */
 .back {
   display: inline-block;
