@@ -7,6 +7,22 @@ document.getElementById('theme-toggle').addEventListener('click', function () {
   localStorage.setItem('theme', next);
 });
 
+/* ===== Section descriptions (project pages only) =====
+   Fills each <p class="section-desc" data-key="..."> from that page's
+   content.js, so the hand-written text lives in one small file instead of
+   being buried in the image markup. */
+(function () {
+  if (!window.PROJECT_CONTENT) return;
+  document.querySelectorAll('.section-desc[data-key]').forEach(function (el) {
+    var text = window.PROJECT_CONTENT[el.getAttribute('data-key')];
+    if (text) {
+      el.textContent = text;
+    } else {
+      el.hidden = true;
+    }
+  });
+})();
+
 /* ===== "Latest project" marker (landing page only) =====
    Walks the project list in order, fetches each project page, and marks the
    last one that isn't still an empty template. A page counts as having content

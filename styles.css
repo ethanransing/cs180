@@ -399,3 +399,9 @@ figcaption {
   .figure-grid { grid-template-columns: 1fr; }
   .figure-row img { height: 170px; }
 }
+
+/* Explanatory blurb under a figure, more prominent than its figcaption */
+.section-desc {
+  font-size: 1rem;
+  margin-top: -8px;
+}
