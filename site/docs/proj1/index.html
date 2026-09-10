@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project 1 — CS 180</title>
+  <meta name="description" content="Project 1: Images of the Russian Empire: Colorizing the Prokudin-Gorskii Photo Collection">
+
+  <!-- Set theme before paint to avoid a flash -->
+  <script>
+    (function () {
+      var t = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+    <!-- shown in light mode: click for dark -->
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+    </svg>
+    <!-- shown in dark mode: click for light -->
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/>
+    </svg>
+  </button>
+
+  <main>
+
+    <a class="back" href="../">&#8592; Home</a>
+
+    <header>
+      <h1 class="page-title">Project 1</h1>
+      <p class="page-meta">Images of the Russian Empire: Colorizing the Prokudin-Gorskii Photo Collection</p>
+    </header>
+
+    <section>
+      <h2>Overview</h2>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj1/cathedral-original.jpg" alt="Raw glass plate scan showing the blue, green, and red exposures stacked vertically" width="390" height="1024">
+          <figcaption>raw scan (B / G / R, top to bottom)</figcaption>
+        </figure>
+      </div>
+      <p class="section-desc" data-key="overview"></p>
+    </section>
+
+    <section>
+      <h2>Naive Stacking</h2>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj1/cathedral-naive.jpg" alt="Cathedral image with channels stacked directly, no alignment" width="390" height="341">
+          <figcaption>no alignment</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/cathedral.jpg" alt="Cathedral image after alignment" width="390" height="341">
+          <figcaption>aligned</figcaption>
+        </figure>
+      </div>
+      <p class="section-desc" data-key="naive-stacking"></p>
+    </section>
+
+    <section>
+      <h2>Single-Scale Search</h2>
+      <p class="section-desc" data-key="single-scale"></p>
+    </section>
+
+    <section>
+      <h2>Image Pyramid</h2>
+      <p class="section-desc" data-key="pyramid"></p>
+    </section>
+
+    <section>
+      <h2>Results</h2>
+
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj1/cathedral.jpg" alt="Aligned cathedral" width="390" height="341">
+          <figcaption>cathedral.jpg</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/tobolsk.jpg" alt="Aligned tobolsk" width="396" height="341">
+          <figcaption>tobolsk.jpg</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/monastery.jpg" alt="Aligned monastery" width="391" height="341">
+          <figcaption>monastery.jpg</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/church.jpg" alt="Aligned church" width="1100" height="969">
+          <figcaption>church.tif</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/emir.jpg" alt="Aligned emir" width="1100" height="953">
+          <figcaption>emir.tif</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/harvesters.jpg" alt="Aligned harvesters" width="1100" height="961">
+          <figcaption>harvesters.tif</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/icon.jpg" alt="Aligned icon" width="1100" height="954">
+          <figcaption>icon.tif</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/ilemselga.jpg" alt="Aligned ilemselga" width="1100" height="946">
+          <figcaption>ilemselga.tif</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/melons.jpg" alt="Aligned melons" width="1100" height="945">
+          <figcaption>melons.tif</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/religious-painting.jpg" alt="Aligned religious painting" width="1100" height="938">
+          <figcaption>religous_painting.tif</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/self-portrait.jpg" alt="Aligned self portrait" width="1100" height="938">
+          <figcaption>self_portrait.tif</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/siren.jpg" alt="Aligned siren" width="1100" height="936">
+          <figcaption>siren.tif</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/three-generations.jpg" alt="Aligned three generations" width="1100" height="950">
+          <figcaption>three_generations.tif</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/wharf.jpg" alt="Aligned wharf" width="1100" height="948">
+          <figcaption>wharf.tif</figcaption>
+        </figure>
+      </div>
+
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Green shift (row, col)</th>
+              <th>Red shift (row, col)</th>
+              <th>Time (s)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>cathedral.jpg</td><td>(5, 2)</td><td>(12, 3)</td><td>0.64</td></tr>
+            <tr><td>tobolsk.jpg</td><td>(3, 3)</td><td>(6, 3)</td><td>0.66</td></tr>
+            <tr><td>monastery.jpg</td><td>(&minus;3, 2)</td><td>(3, 2)</td><td>0.65</td></tr>
+            <tr><td>church.tif</td><td>(25, 4)</td><td>(58, &minus;4)</td><td>61.11</td></tr>
+            <tr><td>emir.tif</td><td>(49, 24)</td><td>(141, &minus;205)</td><td>59.95</td></tr>
+            <tr><td>harvesters.tif</td><td>(60, 17)</td><td>(124, 13)</td><td>60.12</td></tr>
+            <tr><td>icon.tif</td><td>(41, 17)</td><td>(89, 23)</td><td>60.80</td></tr>
+            <tr><td>ilemselga.tif</td><td>(40, 7)</td><td>(130, 11)</td><td>63.04</td></tr>
+            <tr><td>melons.tif</td><td>(82, 11)</td><td>(178, 13)</td><td>62.76</td></tr>
+            <tr><td>religous_painting.tif</td><td>(28, 3)</td><td>(68, 7)</td><td>60.75</td></tr>
+            <tr><td>self_portrait.tif</td><td>(79, 29)</td><td>(176, 37)</td><td>62.66</td></tr>
+            <tr><td>siren.tif</td><td>(49, &minus;6)</td><td>(96, &minus;25)</td><td>63.25</td></tr>
+            <tr><td>three_generations.tif</td><td>(53, 14)</td><td>(112, 11)</td><td>59.33</td></tr>
+            <tr><td>wharf.tif</td><td>(15, &minus;7)</td><td>(83, &minus;16)</td><td>61.29</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="section-desc" data-key="results"></p>
+    </section>
+
+    <section>
+      <h2>Problems Encountered</h2>
+      <p class="section-desc" data-key="problems"></p>
+    </section>
+
+  </main>
+
+  <script src="content.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
