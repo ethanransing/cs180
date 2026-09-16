@@ -8,7 +8,7 @@ document.getElementById('theme-toggle').addEventListener('click', function () {
 });
 
 /* ===== Section descriptions (project pages only) =====
-   Fills each <p class="section-desc" data-key="..."> from that page's
+   Fills each .section-desc[data-key] element (as HTML) from that page's
    content.js, so the hand-written text lives in one small file instead of
    being buried in the image markup. */
 (function () {
@@ -16,7 +16,7 @@ document.getElementById('theme-toggle').addEventListener('click', function () {
   document.querySelectorAll('.section-desc[data-key]').forEach(function (el) {
     var text = window.PROJECT_CONTENT[el.getAttribute('data-key')];
     if (text) {
-      el.textContent = text;
+      el.innerHTML = text;
     } else {
       el.hidden = true;
     }

@@ -47,6 +47,7 @@
         </figure>
       </div>
       <p class="section-desc" data-key="overview"></p>
+      <p class="section-desc" data-key="input-notes"></p>
     </section>
 
     <section>
@@ -56,26 +57,74 @@
           <img src="../images/proj1/cathedral-naive.jpg" alt="Cathedral image with channels stacked directly, no alignment" width="390" height="341">
           <figcaption>no alignment</figcaption>
         </figure>
-        <figure>
-          <img src="../images/proj1/cathedral.jpg" alt="Cathedral image after alignment" width="390" height="341">
-          <figcaption>aligned</figcaption>
-        </figure>
       </div>
-      <p class="section-desc" data-key="naive-stacking"></p>
+      <div class="section-desc" data-key="naive-stacking"></div>
     </section>
 
     <section>
       <h2>Single-Scale Search</h2>
-      <p class="section-desc" data-key="single-scale"></p>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj1/cathedral.jpg" alt="Cathedral aligned with single-scale search" width="390" height="341">
+          <figcaption>cathedral.jpg</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/monastery.jpg" alt="Monastery aligned with single-scale search" width="391" height="341">
+          <figcaption>monastery.jpg</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/tobolsk.jpg" alt="Tobolsk aligned with single-scale search" width="396" height="341">
+          <figcaption>tobolsk.jpg</figcaption>
+        </figure>
+      </div>
+
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Norm</th>
+              <th>Green shift (row, col)</th>
+              <th>Red shift (row, col)</th>
+              <th>Time (s)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>cathedral.jpg</td><td>L2</td><td>(5, 2)</td><td>(12, 3)</td><td>0.10</td></tr>
+            <tr><td>cathedral.jpg</td><td>NCC</td><td>(5, 2)</td><td>(12, 3)</td><td>0.30</td></tr>
+            <tr><td>monastery.jpg</td><td>L2</td><td>(&minus;3, 2)</td><td>(3, 2)</td><td>0.09</td></tr>
+            <tr><td>monastery.jpg</td><td>NCC</td><td>(&minus;3, 2)</td><td>(3, 2)</td><td>0.30</td></tr>
+            <tr><td>tobolsk.jpg</td><td>L2</td><td>(3, 3)</td><td>(6, 3)</td><td>0.10</td></tr>
+            <tr><td>tobolsk.jpg</td><td>NCC</td><td>(3, 3)</td><td>(6, 3)</td><td>0.32</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-desc" data-key="single-scale"></div>
     </section>
 
     <section>
       <h2>Image Pyramid</h2>
-      <p class="section-desc" data-key="pyramid"></p>
+      <div class="section-desc" data-key="pyramid"></div>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj1/church-single-scale.jpg" alt="church.tif aligned with single-scale search, still visibly misaligned" width="1100" height="969">
+          <figcaption>single-scale, &plusmn;15 px window &mdash; G (15, 4), R (15, &minus;15), 39.9 s</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/church.jpg" alt="church.tif aligned with pyramid search" width="1100" height="969">
+          <figcaption>pyramid &mdash; G (25, 4), R (58, &minus;4), 61.1 s</figcaption>
+        </figure>
+      </div>
+      <figure class="figure-wide">
+        <img src="../images/proj1/pyramid-levels.jpg" alt="The blue channel of church.tif downsampled by 16, 8, 4, 2, and 1, shown side by side" width="1686" height="745">
+        <figcaption>church.tif blue channel at each pyramid level (1/16, 1/8, 1/4, 1/2, full)</figcaption>
+      </figure>
     </section>
 
     <section>
       <h2>Results</h2>
+      <div class="section-desc" data-key="results"></div>
 
       <div class="figure-grid">
         <figure>
@@ -165,11 +214,37 @@
         </table>
       </div>
 
-      <p class="section-desc" data-key="results"></p>
+    </section>
+
+    <section>
+      <h2>Chosen Examples</h2>
+
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj1/gundukush-dam-iolotan.jpg" alt="Aligned photo by the Gundukush Dam, Iolotan" width="1100" height="938">
+          <figcaption>By the Gundukush Dam, Iolotan</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/etrusskie-vazy-ermitazh.jpg" alt="Aligned photo of Etruscan vases in the Hermitage, St. Petersburg" width="1100" height="943">
+          <figcaption>Ėtrusskīi︠a︡ vazy. V Ėrmitazhi︠e︡ v SPeterburgi︠e︡</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj1/kurmy.jpg" alt="Aligned photo of traditional dress and cloth, Kurmy" width="1100" height="940">
+          <figcaption>Kurmy</figcaption>
+        </figure>
+      </div>
+
+      <p class="section-desc" data-key="chosen-examples"></p>
     </section>
 
     <section>
       <h2>Problems Encountered</h2>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj1/emir.jpg" alt="Aligned emir" width="1100" height="953">
+          <figcaption>emir.tif</figcaption>
+        </figure>
+      </div>
       <p class="section-desc" data-key="problems"></p>
     </section>
 

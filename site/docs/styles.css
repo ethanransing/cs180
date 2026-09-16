@@ -395,6 +395,18 @@ figcaption {
   max-width: 100%;
 }
 
+/* Single wide figure (e.g. a panorama or side-by-side strip) that should
+   span the content column instead of being pinned to a fixed height */
+.figure-wide {
+  margin: 0 0 24px;
+  text-align: center;
+}
+
+.figure-wide img {
+  width: 100%;
+  height: auto;
+}
+
 @media (max-width: 560px) {
   .figure-grid { grid-template-columns: 1fr; }
   .figure-row img { height: 170px; }
@@ -405,6 +417,13 @@ figcaption {
   font-size: 1rem;
   margin-top: -8px;
 }
+
+/* When the blurb leads the section (before any figure), don't pull it up */
+h2 + .section-desc { margin-top: 0; margin-bottom: 24px; }
+.section-desc > :last-child { margin-bottom: 0; }
+.section-desc ol,
+.section-desc ul { margin: 0 0 1em; padding-left: 1.5em; }
+.section-desc li { margin-bottom: 0.35em; }
 
 /* ===== Data tables ===== */
 .table-scroll {
