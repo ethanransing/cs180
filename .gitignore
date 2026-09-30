@@ -8,3 +8,6 @@ proj1/aligned_pics/
 proj1/aligned_pics_batch/
 proj1/curated_pics_batch/
 proj1/*.txt
+proj2/data/
+proj2/part*/
+__pycache__/

@@ -38,8 +38,393 @@
       <p class="page-meta">Fun with Filters and Frequencies</p>
     </header>
 
+    <section>
+      <h2>Overview</h2>
+      <p class="section-desc" data-key="overview"></p>
+    </section>
+
+    <!-- ===== Part 1: Fun with Filters ===== -->
+
+    <section>
+      <h2>1.1 Convolutions from Scratch</h2>
+      <div class="section-desc" data-key="conv-from-scratch"></div>
+
+<pre><code>def convolve_four_loops(vec1, vec2):
+    vec1 = np.asarray(vec1)
+    vec2 = np.atleast_2d(np.asarray(vec2))
+    kh, kw = vec2.shape
+    output = np.zeros((vec1.shape[0] + kh - 1, vec1.shape[1] + kw - 1))
+    padded = np.pad(vec1, ((kh - 1, kh - 1), (kw - 1, kw - 1)))
+    conv_kernel = np.flip(vec2)
+    for i in range(len(output)):
+        for j in range(len(output[0])):
+            for i_kernel in range(len(conv_kernel)):
+                for j_kernel in range(len(conv_kernel[0])):
+                    output[i][j] += padded[i + i_kernel][j + j_kernel] * conv_kernel[i_kernel][j_kernel]
+    return output
+
+def convolve_two_loops(vec1, vec2):
+    output = np.zeros(shape=np.array(vec1.shape) + np.array(vec2.shape) - 1)
+    vec1 = np.pad(vec1, ((vec2.shape[0] - 1, vec2.shape[0] - 1), (vec2.shape[1] - 1, vec2.shape[1] - 1)))
+    conv_kernel = np.flip(vec2)
+    for i in range(len(output)):
+        for j in range(len(output[0])):
+            patch = vec1[i: i + conv_kernel.shape[0], j: j + conv_kernel.shape[1]]
+            output[i][j] = np.sum(patch * conv_kernel)
+    return output</code></pre>
+
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr><th>Implementation</th><th>Time (s)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>four loops</td><td>1.2826</td></tr>
+            <tr><td>two loops</td><td>0.0721</td></tr>
+            <tr><td><code>scipy.signal.convolve2d</code></td><td>0.0038</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="section-desc" data-key="conv-runtime"></div>
+
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/pfp.jpg" alt="Original photo used for the convolution tests" width="1308" height="1400">
+          <figcaption>pfp.jpeg, original (converted to grayscale before filtering)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/pfp-box.jpg" alt="Grayscale photo convolved with a box filter" width="1308" height="1400">
+          <figcaption>box filter</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/pfp-dx.jpg" alt="Grayscale photo convolved with the D_x finite difference filter" width="1309" height="1400">
+          <figcaption>D<sub>x</sub> = [1, 0, &minus;1] (gray = 0)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/pfp-dy.jpg" alt="Grayscale photo convolved with the D_y finite difference filter" width="1306" height="1400">
+          <figcaption>D<sub>y</sub> = [1, 0, &minus;1]<sup>T</sup> (gray = 0)</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="conv-results"></div>
+    </section>
+
+    <section>
+      <h2>1.2 Finite Difference Operator</h2>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/cameraman.jpg" alt="Original cameraman image" width="540" height="542">
+          <figcaption>cameraman.png</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/cameraman-dx.jpg" alt="Partial derivative of cameraman in x" width="540" height="542">
+          <figcaption>&part;I/&part;x (D<sub>x</sub>, gray = 0)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/cameraman-dy.jpg" alt="Partial derivative of cameraman in y" width="540" height="542">
+          <figcaption>&part;I/&part;y (D<sub>y</sub>, gray = 0)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/cameraman-grad-mag.jpg" alt="Gradient magnitude of cameraman" width="540" height="542">
+          <figcaption>gradient magnitude &radic;(&part;I/&part;x&sup2; + &part;I/&part;y&sup2;)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/cameraman-edges.jpg" alt="Binarized gradient magnitude of cameraman at threshold 0.25" width="540" height="542">
+          <figcaption>binarized gradient magnitude, threshold 0.25</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="finite-diff"></div>
+      <div class="section-desc" data-key="threshold-choice"></div>
+    </section>
+
+    <section>
+      <h2>1.3 Derivative of Gaussian (DoG) Filter</h2>
+      <div class="section-desc" data-key="dog-intro"></div>
+
+      <h3>Blur, then differentiate</h3>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/cameraman-blur.jpg" alt="Cameraman blurred with a 9 by 9 Gaussian" width="540" height="542">
+          <figcaption>blurred with a 9&times;9 Gaussian (&sigma; &asymp; 1.7)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/cameraman-blur-dx.jpg" alt="x derivative of the blurred cameraman" width="540" height="542">
+          <figcaption>blurred, then D<sub>x</sub> (gray = 0)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/cameraman-blur-dy.jpg" alt="y derivative of the blurred cameraman" width="540" height="542">
+          <figcaption>blurred, then D<sub>y</sub> (gray = 0)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/cameraman-blur-grad-mag.jpg" alt="Gradient magnitude of the blurred cameraman" width="540" height="542">
+          <figcaption>blurred, then gradient magnitude</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/cameraman-blur-edges.jpg" alt="Binarized gradient magnitude of the blurred cameraman at threshold 0.08" width="540" height="542">
+          <figcaption>blurred, then binarized gradient magnitude, threshold 0.08</figcaption>
+        </figure>
+      </div>
+
+      <h3>Single DoG convolution</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj2/dog-filters.jpg" alt="The 9 by 9 Gaussian and the derivative of Gaussian filters in x and y" width="1500" height="540">
+        <figcaption>left to right: 9&times;9 Gaussian G, DoG<sub>x</sub> = G &lowast; D<sub>x</sub>, DoG<sub>y</sub> = G &lowast; D<sub>y</sub> (gray = 0)</figcaption>
+      </figure>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/cameraman-dog-dx.jpg" alt="Cameraman convolved with the DoG x filter" width="540" height="542">
+          <figcaption>image &lowast; DoG<sub>x</sub> (gray = 0)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/cameraman-dog-dy.jpg" alt="Cameraman convolved with the DoG y filter" width="540" height="542">
+          <figcaption>image &lowast; DoG<sub>y</sub> (gray = 0)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/cameraman-dog-grad-mag.jpg" alt="Gradient magnitude from the DoG filters" width="540" height="542">
+          <figcaption>DoG gradient magnitude</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/cameraman-dog-edges.jpg" alt="Binarized DoG gradient magnitude at threshold 0.08" width="540" height="542">
+          <figcaption>binarized DoG gradient magnitude, threshold 0.08</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="dog-same"></div>
+
+
+      <h3>Compared with plain finite differences</h3>
+      <div class="figure-row figure-tall">
+        <figure>
+          <img src="../images/proj2/fd-vs-dog.jpg" alt="Gradient magnitude and edges from finite differences versus DoG" width="1200" height="1260">
+          <figcaption>left: finite differences, right: DoG; top: gradient magnitude, bottom: binarized (thresholds 0.25 and 0.08)</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="dog-differences"></div>
+    </section>
+
+    <!-- ===== Part 2: Fun with Frequencies ===== -->
+
+    <section>
+      <h2>2.1 Image Sharpening</h2>
+      <div class="section-desc" data-key="unsharp-intro"></div>
+
+      <h3>taj.jpg</h3>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/taj.jpg" alt="Original Taj Mahal image" width="300" height="300">
+          <figcaption>taj.jpg, original</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/taj-blurred.jpg" alt="Taj Mahal after a Gaussian blur" width="300" height="300">
+          <figcaption>blurred, 9&times;9 Gaussian (&sigma; &asymp; 1.7): low frequencies</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/taj-high-freq.jpg" alt="High frequencies of the Taj Mahal image" width="300" height="300">
+          <figcaption>original &minus; blurred: high frequencies (gray = 0)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/taj-sharpened.jpg" alt="Sharpened Taj Mahal with alpha 1" width="300" height="300">
+          <figcaption>sharpened with the unsharp mask filter, &alpha; = 1</figcaption>
+        </figure>
+      </div>
+      <figure class="figure-wide">
+        <img src="../images/proj2/taj-alpha-sweep.jpg" alt="Taj Mahal sharpened with alpha 0, 0.5, 1, 2, and 5" width="2000" height="430">
+        <figcaption>taj.jpg sharpened with &alpha; = 0 (original), 0.5, 1, 2, 5</figcaption>
+      </figure>
+      <div class="section-desc" data-key="unsharp-taj"></div>
+
+      <h3>IMG_4041.jpg</h3>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/img4041.jpg" alt="Original photo IMG_4041" width="450" height="600">
+          <figcaption>IMG_4041.jpg, original</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/img4041-blurred.jpg" alt="IMG_4041 after a Gaussian blur with sigma 3" width="450" height="600">
+          <figcaption>blurred, Gaussian &sigma; = 3: low frequencies</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/img4041-high-freq.jpg" alt="High frequencies of IMG_4041" width="450" height="600">
+          <figcaption>original &minus; blurred: high frequencies (gray = 0)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/img4041-sharpened.jpg" alt="IMG_4041 sharpened with alpha 2" width="450" height="600">
+          <figcaption>sharpened with the unsharp mask filter (&sigma; = 3), &alpha; = 2</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="unsharp-mine"></div>
+
+      <h3>Blur, then re-sharpen</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj2/img4041-resharpen.jpg" alt="Original IMG_4041, the blurred version, and the blurred version sharpened again" width="1800" height="645">
+        <figcaption>IMG_4041.jpg: original, blurred (Gaussian &sigma; = 3), and the blurred image sharpened with &alpha; = 2</figcaption>
+      </figure>
+      <div class="section-desc" data-key="unsharp-resharpen"></div>
+    </section>
+
+    <section>
+      <h2>2.2 Hybrid Images</h2>
+      <div class="section-desc" data-key="hybrid-intro"></div>
+
+      <h3>Andrew + Goldberg</h3>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/andrew.jpg" alt="Original photo of Andrew" width="680" height="764">
+          <figcaption>Andrew, original (low-pass input)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/goldberg.jpg" alt="Original photo of Goldberg" width="752" height="808">
+          <figcaption>Goldberg, original (high-pass input)</figcaption>
+        </figure>
+      </div>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/andrew-goldberg-aligned1.jpg" alt="Andrew after cropping to the aligned region" width="445" height="576">
+          <figcaption>Andrew, cropped to the aligned region</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/andrew-goldberg-aligned2.jpg" alt="Goldberg warped onto Andrew" width="445" height="576">
+          <figcaption>Goldberg, warped onto Andrew and cropped</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/andrew-goldberg-low.jpg" alt="Andrew low-pass filtered with sigma 6" width="445" height="576">
+          <figcaption>Andrew low-pass, Gaussian &sigma; = 6</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/andrew-goldberg-high.jpg" alt="Goldberg high-pass filtered with sigma 3" width="445" height="576">
+          <figcaption>Goldberg high-pass, image &minus; Gaussian (&sigma; = 3), gray = 0</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="hybrid-alignment"></div>
+      <figure class="figure-wide">
+        <img src="../images/proj2/andrew-goldberg-fft.jpg" alt="Log magnitude Fourier transforms of both inputs, the filtered images, and the hybrid" width="2000" height="400">
+        <figcaption>log-magnitude FFT, left to right: Andrew, Goldberg, low-pass (&sigma; = 6), high-pass (&sigma; = 3), hybrid</figcaption>
+      </figure>
+      <div class="section-desc" data-key="hybrid-fft"></div>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj2/andrew-goldberg-hybrid.jpg" alt="Hybrid image of Andrew and Goldberg" width="445" height="576">
+          <figcaption>hybrid, &sigma;<sub>low</sub> = 6, &sigma;<sub>high</sub> = 3 (Andrew from far away, Goldberg up close)</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="hybrid-cutoff"></div>
+
+      <h3>Samarth + Golden Retriever</h3>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/samarth.jpg" alt="Original photo of Samarth" width="646" height="1400">
+          <figcaption>Samarth, original (low-pass input)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/dog.jpg" alt="Original photo of a golden retriever" width="1400" height="933">
+          <figcaption>golden retriever, original (high-pass input)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/samarth-dog-hybrid.jpg" alt="Hybrid image of Samarth and the golden retriever" width="540" height="667">
+          <figcaption>hybrid, &sigma;<sub>low</sub> = 8, &sigma;<sub>high</sub> = 2 (Samarth from far away, dog up close)</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="hybrid-samarth-dog"></div>
+
+      <h3>Derek + Nutmeg</h3>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/derek.jpg" alt="Original photo of Derek" width="732" height="1024">
+          <figcaption>Derek, original (low-pass input)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/nutmeg.jpg" alt="Original photo of Nutmeg the cat" width="1400" height="1050">
+          <figcaption>Nutmeg, original (high-pass input)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/derek-nutmeg-hybrid.jpg" alt="Hybrid image of Derek and Nutmeg" width="490" height="495">
+          <figcaption>hybrid, &sigma;<sub>low</sub> = 9, &sigma;<sub>high</sub> = 4 (Derek from far away, Nutmeg up close)</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="hybrid-derek-nutmeg"></div>
+    </section>
+
+    <section>
+      <h2>2.3 Gaussian and Laplacian Stacks</h2>
+      <div class="section-desc" data-key="stacks-intro"></div>
+      <figure class="figure-wide">
+        <img src="../images/proj2/apple-stacks.jpg" alt="Gaussian stack (top) and Laplacian stack (bottom) of the apple, 5 levels" width="2000" height="867">
+        <figcaption>apple: Gaussian stack (top) and Laplacian stack (bottom), levels 0&ndash;4, blur &sigma; = 2 doubling each level; Laplacian levels contrast-stretched for display</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj2/orange-stacks.jpg" alt="Gaussian stack (top) and Laplacian stack (bottom) of the orange, 5 levels" width="2000" height="867">
+        <figcaption>orange: Gaussian stack (top) and Laplacian stack (bottom), levels 0&ndash;4, blur &sigma; = 2 doubling each level; Laplacian levels contrast-stretched for display</figcaption>
+      </figure>
+      <div class="section-desc" data-key="stacks-levels"></div>
+      <div class="figure-row figure-tall">
+        <figure>
+          <img src="../images/proj2/oraple-fig342.jpg" alt="Recreation of Szeliski Figure 3.42: masked apple, masked orange, and blend at fine, middle, and coarse levels, plus the collapsed result" width="1350" height="1800">
+          <figcaption>recreating Szeliski Fig. 3.42. Columns: masked apple, masked orange, sum. Rows: Laplacian levels 0, 2, 4, then all levels collapsed</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="stacks-fig342"></div>
+    </section>
+
+    <section>
+      <h2>2.4 Multiresolution Blending</h2>
+      <div class="section-desc" data-key="blend-intro"></div>
+
+      <h3>Towel animals</h3>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/towel-elephant.jpg" alt="Towel elephant on a hotel bed" width="830" height="1131">
+          <figcaption>IMG_6044 (kept on the left)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/towel-other.jpg" alt="A second towel animal on the same bed" width="830" height="1131">
+          <figcaption>IMG_5931 (kept on the right)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/towel-blend.jpg" alt="The two towel animals blended along a vertical seam" width="830" height="1131">
+          <figcaption>blend, vertical seam, 7 levels</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="blend-towel"></div>
+
+      <h3>Golden retriever face on tabby (irregular mask)</h3>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj2/golden-aligned-to-tabby.jpg" alt="Golden retriever warped so its face lines up with the tabby's" width="612" height="605">
+          <figcaption>golden retriever, aligned to the tabby (blend input 1)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/tabby.jpg" alt="Tabby cat" width="612" height="605">
+          <figcaption>tabby, original (blend input 2)</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj2/tabby-face-mask.jpg" alt="Circular mask over the tabby's face" width="612" height="605">
+          <figcaption>mask (white: golden&rsquo;s face, black: tabby)</figcaption>
+        </figure>
+      </div>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj2/golden-face-on-tabby.jpg" alt="Golden retriever's face blended onto the tabby" width="612" height="605">
+          <figcaption>blend: golden&rsquo;s face on the tabby, 5 levels</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="blend-faces"></div>
+
+      <h3>Laplacian stack</h3>
+      <div class="figure-row figure-tall">
+        <figure>
+          <img src="../images/proj2/golden-face-on-tabby-levels.jpg" alt="Each Laplacian level of the masked golden retriever face, the masked tabby, and their sum, plus the collapsed blend" width="1000" height="2000">
+          <figcaption>golden face on tabby. Columns: masked golden face, masked tabby, sum. Rows: Laplacian levels 0&ndash;4, then all levels collapsed</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="blend-levels"></div>
+    </section>
+
+    <section>
+      <h2>What I Learned</h2>
+      <p class="section-desc" data-key="learned"></p>
+    </section>
+
   </main>
 
+  <script src="content.js"></script>
   <script src="../script.js"></script>
 </body>
 </html>
