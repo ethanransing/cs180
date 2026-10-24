@@ -432,10 +432,15 @@ figcaption {
 .section-desc {
   font-size: 1rem;
   margin-top: -8px;
+  margin-bottom: 1em;
 }
 
 /* When the blurb leads the section (before any figure), don't pull it up */
 h2 + .section-desc { margin-top: 0; margin-bottom: 24px; }
+h3 + .section-desc { margin-top: 0; }
+
+/* Breathing room before a subheading that follows other content */
+section > * + h3 { margin-top: 32px; }
 .section-desc > :last-child { margin-bottom: 0; }
 .section-desc ol,
 .section-desc ul { margin: 0 0 1em; padding-left: 1.5em; }
@@ -470,4 +475,25 @@ h2 + .section-desc { margin-top: 0; margin-bottom: 24px; }
 .figure-row.figure-tall img { height: 900px; }
 @media (max-width: 560px) {
   .figure-row.figure-tall img { height: auto; width: 100%; }
+}
+
+/* Text prompt shown above a generated figure */
+.prompt {
+  margin: 0 0 12px;
+  color: var(--muted);
+}
+
+/* Reduced-size hybrid image: keep it at native size so it reads as "far away" */
+.figure-row img.hybrid-small {
+  height: 64px;
+  width: 64px;
+}
+@media (max-width: 560px) {
+  .figure-row img.hybrid-small { height: 64px; }
+}
+
+/* Part A / Part B dividers on multi-part project pages */
+.part-header h2 {
+  font-size: 1.6rem;
+  border-bottom-width: 2px;
 }

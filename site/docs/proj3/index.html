@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Project 3 — CS 180</title>
-  <meta name="description" content="Project 3: Fun with Diffusion Models">
+  <meta name="description" content="Project 3: Exploring the Power of Flow Models">
 
   <!-- Set theme before paint to avoid a flash -->
   <script>
@@ -35,11 +35,562 @@
 
     <header>
       <h1 class="page-title">Project 3</h1>
-      <p class="page-meta">Fun with Diffusion Models</p>
+      <p class="page-meta">Exploring the Power of Flow Models</p>
     </header>
+
+    <section>
+      <h2>Overview</h2>
+      <p class="section-desc" data-key="overview"></p>
+    </section>
+
+    <section class="part-header">
+      <h2>Part A: Exploring the Power of Flow Models</h2>
+    </section>
+
+    <!-- ===== Part 1: Visualizing Training and Sampling ===== -->
+
+    <section>
+      <h2>1.1 Constructing Noisy Training Inputs</h2>
+      <div class="section-desc" data-key="interpolate-intro"></div>
+
+<pre><code>def interpolate(image, noise, t):
+    return (1 - t) * noise + t * image</code></pre>
+
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj3/own-original.jpg" alt="My own test image, center-cropped to 512 by 512" width="512" height="512">
+          <figcaption>Original image</figcaption>
+        </figure>
+      </div>
+      <figure class="figure-wide">
+        <img src="../images/proj3/noisy-inputs.jpg" alt="Original image and noisy versions at t = 0.25, 0.50, and 0.75" width="1593" height="411">
+        <figcaption>Image mixed with noise at t = 0.25, 0.50, 0.75</figcaption>
+      </figure>
+      <div class="section-desc" data-key="interpolate-results"></div>
+    </section>
+
+    <section>
+      <h2>1.2 Classical Denoising</h2>
+      <div class="section-desc" data-key="blur-intro"></div>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj3/blur-t025.jpg" alt="Noisy input at t = 0.25 beside its best Gaussian blur" width="793" height="411">
+          <figcaption></figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj3/blur-t050.jpg" alt="Noisy input at t = 0.50 beside its best Gaussian blur" width="793" height="411">
+          <figcaption></figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj3/blur-t075.jpg" alt="Noisy input at t = 0.75 beside its best Gaussian blur" width="793" height="411">
+          <figcaption></figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="blur-results"></div>
+    </section>
+
+    <section>
+      <h2>1.3 One-Step Denoising</h2>
+      <div class="section-desc" data-key="one-step-intro"></div>
+
+<pre><code>def one_step_denoise(x, t, condition, predict_velocity):
+    return (1 - t) * predict_velocity(x, t, condition) + x</code></pre>
+
+      <figure class="figure-wide">
+        <img src="../images/proj3/one-step-t025.jpg" alt="Original, noisy input at t = 0.25, and one-step estimate" width="1193" height="411">
+        <figcaption>At t = 0.25: the original image, the noisy input, and the model&rsquo;s one-step guess</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj3/one-step-t050.jpg" alt="Original, noisy input at t = 0.50, and one-step estimate" width="1193" height="411">
+        <figcaption>At t = 0.50: the original image, the noisy input, and the model&rsquo;s one-step guess</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj3/one-step-t075.jpg" alt="Original, noisy input at t = 0.75, and one-step estimate" width="1193" height="411">
+        <figcaption>At t = 0.75: the original image, the noisy input, and the model&rsquo;s one-step guess</figcaption>
+      </figure>
+      <div class="section-desc" data-key="one-step-results"></div>
+    </section>
+
+    <section>
+      <h2>1.4 Visualizing Velocity</h2>
+      <div class="section-desc" data-key="velocity-intro"></div>
+
+<pre><code>@torch.inference_mode()
+def velocity_diagnostics(x_t, t, clean_image, epsilon, condition, predict_velocity):
+    predicted_update = (1 - t) * predict_velocity(x_t, t, condition)
+    ground_truth_update = clean_image - x_t
+    error_map = torch.sqrt(((predicted_update - ground_truth_update)**2).mean(dim=1))
+    return predicted_update, ground_truth_update, error_map</code></pre>
+
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj3/own-original.jpg" alt="The original clean image used for the velocity comparison" width="512" height="512">
+          <figcaption>Original image, x<sub>1</sub></figcaption>
+        </figure>
+      </div>
+
+      <figure class="figure-wide">
+        <img src="../images/proj3/velocity-t025.jpg" alt="Noisy image, predicted update, ground-truth update, and error map at t = 0.25" width="1558" height="411">
+        <figcaption>What the model adds at t = 0.25 versus what it should add, with the error between them</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj3/velocity-t050.jpg" alt="Noisy image, predicted update, ground-truth update, and error map at t = 0.50" width="1558" height="411">
+        <figcaption>The same comparison at t = 0.50</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj3/velocity-t075.jpg" alt="Noisy image, predicted update, ground-truth update, and error map at t = 0.75" width="1558" height="411">
+        <figcaption>The same comparison at t = 0.75. All updates share one color scale (gray = 0), and all error maps share one scale</figcaption>
+      </figure>
+      <div class="section-desc" data-key="velocity-results"></div>
+    </section>
+
+    <section>
+      <h2>1.5 Iterative Denoising with Euler Sampling</h2>
+      <div class="section-desc" data-key="euler-intro"></div>
+
+<pre><code>@torch.inference_mode()
+def euler_sample(x_start, t_start, step_size, velocity):
+    x_end = x_start.clone()
+    t = float(t_start)
+    history = []
+    while t &lt; 1:
+        clipped_step_size = min(step_size, 1.0 - t)
+        x_end += clipped_step_size * velocity(x_end, t)
+        t += clipped_step_size
+        history.append((t, x_end.clone()))
+    return x_end, history</code></pre>
+
+      <figure class="figure-wide">
+        <img src="../images/proj3/euler-trajectory.jpg" alt="Euler sampling trajectory from the t = 0.50 noisy input to t = 1, showing the initial state, every fifth update, and the final image" width="1254" height="913">
+        <figcaption>The image coming back into focus over 25 Euler steps (h = 0.02), starting from the t = 0.50 noisy input</figcaption>
+      </figure>
+      <div class="section-desc" data-key="euler-trajectory"></div>
+
+      <h3>Blur vs. one step vs. Euler</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj3/denoise-comparison.jpg" alt="Original image, Gaussian blur, one-step estimate, and Euler result from the same t = 0.50 input" width="1593" height="411">
+        <figcaption>Three ways to clean up the same t = 0.50 input, next to the original: Gaussian blur, one step, and 25 Euler steps</figcaption>
+      </figure>
+      <div class="section-desc" data-key="euler-comparison"></div>
+    </section>
+
+    <section>
+      <h2>1.6 Generating Images from Noise</h2>
+      <div class="section-desc" data-key="sampling-intro"></div>
+      <figure class="figure-wide">
+        <img src="../images/proj3/samples-conditional.jpg" alt="Five samples generated from pure noise with the prompt a high quality photo" width="1602" height="811">
+        <figcaption>Five images generated from pure noise with &ldquo;a high quality photo&rdquo; (50 Euler steps, seeds 180&ndash;184)</figcaption>
+      </figure>
+      <div class="section-desc" data-key="sampling-results"></div>
+    </section>
+
+    <!-- ===== Part 2: Conditional Generation and Guidance ===== -->
+
+    <section>
+      <h2>2.1 Classifier-Free Guidance</h2>
+      <div class="section-desc" data-key="cfg-intro"></div>
+
+<pre><code>def cfg_velocity(x, t, condition, w, predict_velocity, null_condition=''):
+    conditional_v = predict_velocity(x, t, condition)
+    null_v = predict_velocity(x, t, null_condition)
+    return conditional_v + w * (conditional_v - null_v)</code></pre>
+
+      <figure class="figure-wide">
+        <img src="../images/proj3/samples-cfg.jpg" alt="Five CFG samples with w = 7 using the same initial noises as Section 1.6" width="1602" height="811">
+        <figcaption>The same five seeds with classifier-free guidance (w = 7)</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj3/samples-conditional.jpg" alt="The Section 1.6 samples without guidance, for comparison" width="1602" height="811">
+        <figcaption>The same seeds without guidance, from 1.6, for comparison</figcaption>
+      </figure>
+      <div class="section-desc" data-key="cfg-results"></div>
+    </section>
+
+    <!-- ===== Part 3: Creative Applications ===== -->
+
+    <section>
+      <h2>3.1 Image-to-Image Editing</h2>
+      <div class="section-desc" data-key="edit-intro"></div>
+
+<pre><code>def edit(image, noise, t_start, condition, predict_velocity, w=7, step_size=0.02):
+    noised_image = interpolate(image, noise, t_start)
+    edited, _ = euler_sample(noised_image, t_start, step_size,
+                             lambda x, t: cfg_velocity(x, t, condition, w, predict_velocity))
+    return edited</code></pre>
+
+      <h3>Campanile</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj3/edit-campanile.jpg" alt="Campanile and its edits at seven starting times" width="1593" height="811">
+        <figcaption>The Campanile re-imagined from seven starting times, t<sub>start</sub> = 0.02 to 0.50, with &ldquo;a high quality photo&rdquo; and w = 7</figcaption>
+      </figure>
+      <div class="section-desc" data-key="edit-campanile"></div>
+
+      <h3>My image 1</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj3/edit-mine1.jpg" alt="My first test image and its edits at seven starting times" width="1593" height="811">
+        <figcaption>My original image re-imagined from the same seven starting times</figcaption>
+      </figure>
+      <div class="section-desc" data-key="edit-mine1"></div>
+
+      <h3>My image 2</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj3/edit-mine2.jpg" alt="My second test image and its edits at seven starting times" width="1593" height="811">
+        <figcaption>My dog, re-imagined from the same seven starting times</figcaption>
+      </figure>
+      <div class="section-desc" data-key="edit-mine2"></div>
+
+      <h3>Web image</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj3/edit-web.jpg" alt="An image from the web and its edits at seven starting times" width="1593" height="811">
+        <figcaption>A seal pup on the ice from the web, re-imagined from the same seven starting times</figcaption>
+      </figure>
+      <div class="section-desc" data-key="edit-web"></div>
+
+      <h3>Hand-drawn images</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj3/edit-drawing1.jpg" alt="My first drawing and its edits at seven starting times" width="1593" height="811">
+        <figcaption>My drawing, re-imagined from the same seven starting times</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj3/edit-drawing2.jpg" alt="My second drawing, a crabeater seal, and its edits at seven starting times" width="1593" height="811">
+        <figcaption>My drawing, re-imagined from the same seven starting times</figcaption>
+      </figure>
+      <div class="section-desc" data-key="edit-drawings"></div>
+    </section>
+
+    <section>
+      <h2>3.2 Text-Guided Image Editing</h2>
+      <div class="section-desc" data-key="text-edit-intro"></div>
+
+      <h3>Campanile</h3>
+      <p class="prompt">Prompt: <strong>&ldquo;a photograph of a dog&rdquo;</strong></p>
+      <figure class="figure-wide">
+        <img src="../images/proj3/text-edit-campanile.jpg" alt="Campanile edited toward the prompt a photograph of a dog at seven starting times" width="1580" height="811">
+        <figcaption>The Campanile edited toward the prompt from t<sub>start</sub> = 0.02 to 0.50</figcaption>
+      </figure>
+      <div class="section-desc" data-key="text-edit-campanile"></div>
+
+      <h3>My image 1</h3>
+      <p class="prompt">Prompt: <strong>&ldquo;a realistic photo of a spotted seal&rdquo;</strong></p>
+      <figure class="figure-wide">
+        <img src="../images/proj3/text-edit-mine1.jpg" alt="My first image edited toward the prompt a realistic photo of a spotted seal" width="1580" height="811">
+        <figcaption>My image edited toward the prompt from t<sub>start</sub> = 0.02 to 0.50</figcaption>
+      </figure>
+      <div class="section-desc" data-key="text-edit-mine1"></div>
+
+      <h3>My image 2</h3>
+      <p class="prompt">Prompt: <strong>&ldquo;a cartoon drawing of a crabeater seal&rdquo;</strong></p>
+      <figure class="figure-wide">
+        <img src="../images/proj3/text-edit-mine2.jpg" alt="My second image edited toward the prompt a cartoon drawing of a crabeater seal" width="1580" height="811">
+        <figcaption>My dog edited toward the prompt from t<sub>start</sub> = 0.02 to 0.50</figcaption>
+      </figure>
+      <div class="section-desc" data-key="text-edit-mine2"></div>
+    </section>
+
+    <section>
+      <h2>3.3 Visual Anagrams</h2>
+      <div class="section-desc" data-key="anagram-intro"></div>
+
+<pre><code>def visual_anagrams(noise, condition_a, condition_b, predict_velocity, w=7, step_size=0.02):
+    def anagram_velocity(img, t):
+        v = cfg_velocity(img, t, condition_a, w, predict_velocity)
+        flipped_v = rotate180(cfg_velocity(rotate180(img), t, condition_b, w, predict_velocity))
+        return (v + flipped_v) / 2
+    anagram, _ = euler_sample(noise, 0.0, step_size, anagram_velocity)
+    return anagram</code></pre>
+
+      <h3>&ldquo;a rocky mountain&rdquo; / &ldquo;a group of seals&rdquo;</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj3/anagram-0.jpg" alt="Visual anagram: a rocky mountain upright, a group of seals when rotated 180 degrees" width="793" height="411">
+        <figcaption>Upright it&rsquo;s &ldquo;a rocky mountain&rdquo;; flipped upside down it&rsquo;s &ldquo;a group of seals&rdquo; (seed 180)</figcaption>
+      </figure>
+      <div class="section-desc" data-key="anagram-0"></div>
+
+      <h3>&ldquo;a ferocious bear&rdquo; / &ldquo;a happy dog&rdquo;</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj3/anagram-1.jpg" alt="Visual anagram: a ferocious bear upright, a happy dog when rotated 180 degrees" width="793" height="411">
+        <figcaption>Upright it&rsquo;s &ldquo;a ferocious bear&rdquo;; flipped upside down it&rsquo;s &ldquo;a happy dog&rdquo; (seed 181)</figcaption>
+      </figure>
+      <div class="section-desc" data-key="anagram-1"></div>
+    </section>
+
+    <section>
+      <h2>3.4 Hybrid Images</h2>
+      <div class="section-desc" data-key="hybrid-intro"></div>
+
+<pre><code>def make_hybrids(noise, condition_a, condition_b, predict_velocity, w=7, step_size=0.02):
+    def hybrid_velocity(img, t):
+        v_a = cfg_velocity(img, t, condition_a, w, predict_velocity)
+        v_b = cfg_velocity(img, t, condition_b, w, predict_velocity)
+        v_a_lowpass = gaussian_blur(v_a, [265, 265], [16.0, 16.0])
+        v_b_lowpass = gaussian_blur(v_b, [265, 265], [16.0, 16.0])
+        v_b_highpass = v_b - v_b_lowpass
+        return v_a_lowpass + v_b_highpass
+    hybrid, _ = euler_sample(noise, 0.0, step_size, hybrid_velocity)
+    return hybrid</code></pre>
+
+      <h3>&ldquo;a rocky mountain&rdquo; (distant) / &ldquo;a group of seals&rdquo; (close)</h3>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj3/hybrid-0.jpg" alt="Hybrid image at full size: a group of seals up close" width="512" height="512">
+          <figcaption>Up close: &ldquo;a group of seals&rdquo;</figcaption>
+        </figure>
+        <figure>
+          <img class="hybrid-small" src="../images/proj3/hybrid-0-small.png" alt="Hybrid image reduced to 64 by 64: a rocky mountain from far away" width="64" height="64">
+          <figcaption>From far away (64&times;64): &ldquo;a rocky mountain&rdquo;</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="hybrid-0"></div>
+
+      <h3>&ldquo;a ferocious bear&rdquo; (distant) / &ldquo;a happy dog&rdquo; (close)</h3>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj3/hybrid-1.jpg" alt="Hybrid image at full size: a happy dog up close" width="512" height="512">
+          <figcaption>Up close: &ldquo;a happy dog&rdquo;</figcaption>
+        </figure>
+        <figure>
+          <img class="hybrid-small" src="../images/proj3/hybrid-1-small.png" alt="Hybrid image reduced to 64 by 64: a ferocious bear from far away" width="64" height="64">
+          <figcaption>From far away (64&times;64): &ldquo;a ferocious bear&rdquo;</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="hybrid-1"></div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- ===== Part B: Flow Matching from Scratch ===== -->
+    <!-- ===================================================== -->
+
+    <section class="part-header">
+      <h2>Part B: Flow Matching from Scratch</h2>
+      <div class="section-desc" data-key="b-intro"></div>
+    </section>
+
+    <!-- ===== B Part 1: Single-Step Denoising UNet ===== -->
+
+    <section>
+      <h2>1.1 Implementing the UNet</h2>
+      <div class="section-desc" data-key="b-unet"></div>
+
+<pre><code>class UnconditionalUNet(nn.Module):
+    def __init__(self, in_channels: int, num_hiddens: int):
+        super().__init__()
+        self.conv1 = ConvBlock(in_channels, num_hiddens)
+        self.down1 = DownBlock(num_hiddens, num_hiddens)
+        self.down2 = DownBlock(num_hiddens, num_hiddens * 2)
+        self.flatten = Flatten()
+        self.unflatten = Unflatten(num_hiddens * 2)
+        self.up1 = UpBlock(4 * num_hiddens, num_hiddens)
+        self.up2 = UpBlock(2 * num_hiddens, num_hiddens)
+        self.conv2 = ConvBlock(num_hiddens * 2, num_hiddens)
+        self.output = nn.Conv2d(in_channels=num_hiddens, out_channels=1, kernel_size=3, stride=1, padding=1)
+
+    def forward(self, x: torch.Tensor) -&gt; torch.Tensor:
+        x1 = self.conv1(x)
+        x2 = self.down1(x1)
+        x3 = self.down2(x2)
+        z = self.unflatten(self.flatten(x3))
+        z = self.up1(torch.cat([x3, z], dim=1))
+        z = self.up2(torch.cat([x2, z], dim=1))
+        z = self.conv2(torch.cat([x1, z], dim=1))
+        return self.output(z)</code></pre>
+    </section>
+
+    <section>
+      <h2>1.2 Using the UNet to Train a Denoiser</h2>
+      <div class="section-desc" data-key="b-noising-intro"></div>
+      <figure class="figure-wide">
+        <img src="../images/proj3/partb/noise-levels.png" alt="An MNIST digit with Gaussian noise added at sigma 0.0, 0.2, 0.4, 0.5, 0.6, 0.8, and 1.0" width="1400" height="200">
+        <figcaption>An MNIST digit with more and more Gaussian noise added, z = x + &sigma;&epsilon; for &sigma; from 0.0 to 1.0</figcaption>
+      </figure>
+      <div class="section-desc" data-key="b-noising-results"></div>
+
+      <h3>1.2.1 Training</h3>
+      <div class="section-desc" data-key="b-denoiser-training"></div>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj3/partb/denoiser-loss.png" alt="Training loss curve for the single-step denoiser" width="640" height="480">
+          <figcaption>Training loss of the denoiser at every step (D = 128, &sigma; = 0.5, Adam lr = 1e-4, batch size 256, 5 epochs)</figcaption>
+        </figure>
+      </div>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj3/partb/denoiser-epoch-1.png" alt="Clean, noisy, and denoised test digits after epoch 1" width="600" height="800">
+          <figcaption>Test digits, their noisy versions, and the denoiser&rsquo;s output after 1 epoch</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj3/partb/denoiser-epoch-5.png" alt="Clean, noisy, and denoised test digits after epoch 5" width="600" height="800">
+          <figcaption>The same test digits after 5 epochs</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="b-denoiser-results"></div>
+
+      <h3>1.2.2 Out-of-Distribution Testing</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj3/partb/ood-denoising.png" alt="Denoiser outputs for four test digits at noise levels it was not trained on" width="1400" height="800">
+        <figcaption>The denoiser, trained only at &sigma; = 0.5, cleaning up test digits at noise levels from 0.0 to 1.0</figcaption>
+      </figure>
+      <div class="section-desc" data-key="b-ood"></div>
+
+      <h3>1.2.3 Denoising Pure Noise</h3>
+      <div class="section-desc" data-key="b-pure-noise-intro"></div>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj3/partb/pure-noise-loss.png" alt="Training loss curve for the denoiser trained on pure noise inputs" width="640" height="480">
+          <figcaption>Training loss at every step when the input is pure noise and the target is a clean digit (D = 128, 5 epochs)</figcaption>
+        </figure>
+      </div>
+      <figure class="figure-wide">
+        <img src="../images/proj3/partb/pure-noise-epoch-1.png" alt="Outputs of the pure-noise model on four held-out noise inputs after epoch 1" width="800" height="200">
+        <figcaption>What the pure-noise model produces after 1 epoch</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj3/partb/pure-noise-epoch-5.png" alt="Outputs of the pure-noise model on the same noise inputs after epoch 5" width="800" height="200">
+        <figcaption>The same noise inputs after 5 epochs</figcaption>
+      </figure>
+      <div class="section-desc" data-key="b-pure-noise-results"></div>
+    </section>
+
+    <!-- ===== B Part 2: Flow Matching ===== -->
+
+    <section>
+      <h2>2.1 Adding Time Conditioning to the UNet</h2>
+      <div class="section-desc" data-key="b-time-cond"></div>
+
+<pre><code>def time_fm_forward(unet, x_1, num_ts):
+    batch_size = x_1.shape[0]
+    noise = torch.randn_like(x_1)
+    t = torch.rand(batch_size, device=x_1.device)
+    t_image = t.reshape(batch_size, 1, 1, 1)
+    x_t = (1 - t_image) * noise + t_image * x_1
+    predicted_v = unet(x_t, t)
+    target_v = x_1 - noise
+    return F.mse_loss(predicted_v, target_v)</code></pre>
+    </section>
+
+    <section>
+      <h2>2.2 Training the Time-Conditioned UNet</h2>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj3/partb/time-flow-loss.png" alt="Training loss curve for the time-conditioned flow matching UNet" width="640" height="480">
+          <figcaption>Training loss of the time-conditioned UNet at every step (D = 64, batch size 64, Adam lr = 1e-2 decaying by &gamma; = 0.1<sup>1/10</sup> per epoch, 10 epochs)</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="b-time-training"></div>
+    </section>
+
+    <section>
+      <h2>2.3 Sampling from the Time-Conditioned UNet</h2>
+      <div class="section-desc" data-key="b-time-sampling-intro"></div>
+
+<pre><code>@torch.inference_mode()
+def time_fm_sample(unet, img_wh, num_ts, seed=0):
+    torch.manual_seed(seed)
+    height, width = img_wh
+    x = torch.randn(1, 1, height, width, device=device)
+    step_size = 1.0 / num_ts
+    for step in range(num_ts):
+        t = torch.full((1,), step / num_ts, device=device)
+        velocity = unet(x, t)
+        x = x + step_size * velocity
+    return x</code></pre>
+
+      <figure class="figure-wide">
+        <img src="../images/proj3/partb/time-flow-epoch-1.png" alt="Ten samples from the time-conditioned model after epoch 1" width="1500" height="200">
+        <figcaption>Ten digits generated by the time-conditioned UNet after 1 epoch</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj3/partb/time-flow-epoch-5.png" alt="Ten samples from the time-conditioned model after epoch 5" width="1500" height="200">
+        <figcaption>After 5 epochs</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj3/partb/time-flow-epoch-10.png" alt="Ten samples from the time-conditioned model after epoch 10" width="1500" height="200">
+        <figcaption>After 10 epochs (the same seeds, 0&ndash;9, at every epoch)</figcaption>
+      </figure>
+      <div class="section-desc" data-key="b-time-sampling-results"></div>
+    </section>
+
+    <section>
+      <h2>2.4 Adding Class-Conditioning to the UNet</h2>
+      <div class="section-desc" data-key="b-class-cond"></div>
+
+<pre><code>def class_fm_forward(unet, x_1, c, p_uncond, num_ts):
+    batch_size = x_1.shape[0]
+    noise = torch.randn_like(x_1)
+    t = torch.rand(batch_size, device=x_1.device)
+    t_image = t.reshape(batch_size, 1, 1, 1)
+    x_t = (1 - t_image) * noise + t_image * x_1
+    mask = torch.rand(batch_size, device=x_1.device) &gt;= p_uncond
+    mask = mask.float()
+    predicted_v = unet(x_t, c, t, mask)
+    target_v = x_1 - noise
+    return F.mse_loss(predicted_v, target_v)</code></pre>
+    </section>
+
+    <section>
+      <h2>2.5 Training the Class-Conditioned UNet</h2>
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj3/partb/class-flow-losses.png" alt="Training loss curves for the class-conditioned UNet with the scheduled and constant learning rates, log scale" width="640" height="480">
+          <figcaption>Training loss of the class-conditioned UNet on a log scale, with the decaying learning rate (blue, starting at 1e-2) and a constant 3e-3 (orange). D = 64, batch size 64, p<sub>uncond</sub> = 0.1, 10 epochs</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="b-class-training"></div>
+    </section>
+
+    <section>
+      <h2>2.6 Sampling from the Class-Conditioned UNet</h2>
+      <div class="section-desc" data-key="b-class-sampling-intro"></div>
+
+<pre><code>@torch.inference_mode()
+def class_fm_sample(unet, c, img_wh, num_ts, guidance_scale=5.0, seed=0):
+    torch.manual_seed(seed)
+    c = c.to(device)
+    batch_size = c.shape[0]
+    height, width = img_wh
+    x = torch.randn(batch_size, 1, height, width, device=device)
+    step_size = 1.0 / num_ts
+    unconditional_mask = torch.zeros(batch_size, device=device)
+    frames = [x.clone()]
+    for step in range(num_ts):
+        t = torch.full((batch_size,), step / num_ts, device=device)
+        conditional_v = unet(x, c, t)
+        unconditional_v = unet(x, c, t, unconditional_mask)
+        velocity = unconditional_v + guidance_scale * (conditional_v - unconditional_v)
+        x = x + step_size * velocity
+        frames.append(x.clone())
+    frames = torch.stack(frames, dim=1)
+    return x, frames</code></pre>
+
+      <figure class="figure-wide">
+        <img src="../images/proj3/partb/class-flow-epoch-1.png" alt="Four samples of each digit 0 to 9 from the class-conditioned model after epoch 1" width="1500" height="600">
+        <figcaption>Digits 0&ndash;9 from the class-conditioned UNet after 1 epoch</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj3/partb/class-flow-epoch-5.png" alt="Four samples of each digit 0 to 9 from the class-conditioned model after epoch 5" width="1500" height="600">
+        <figcaption>After 5 epochs</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj3/partb/class-flow-epoch-10.png" alt="Four samples of each digit 0 to 9 from the class-conditioned model after epoch 10" width="1500" height="600">
+        <figcaption>After 10 epochs. Each grid shows four of every digit, generated with &gamma; = 5.0 and 300 Euler steps from the same seed (180) each time</figcaption>
+      </figure>
+      <div class="section-desc" data-key="b-class-sampling-results"></div>
+
+      <h3>Without the learning rate scheduler</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj3/partb/class-flow-no-scheduler-epoch-10.png" alt="Four samples of each digit from the class-conditioned model trained with a constant learning rate, epoch 10" width="1500" height="600">
+        <figcaption>Digits from the model trained with a constant 3e-3 learning rate and no scheduler, after 10 epochs (same seed, &gamma;, and steps as above)</figcaption>
+      </figure>
+      <div class="section-desc" data-key="b-no-scheduler"></div>
+    </section>
+
+    <section>
+      <h2>What I Learned</h2>
+      <p class="section-desc" data-key="learned"></p>
+    </section>
 
   </main>
 
+  <script src="content.js"></script>
   <script src="../script.js"></script>
 </body>
 </html>
