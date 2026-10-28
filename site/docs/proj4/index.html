@@ -15,6 +15,10 @@
   </script>
 
   <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\(', right: '\\)', display: false}]})"></script>
 </head>
 <body>
   <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
@@ -38,8 +42,251 @@
       <p class="page-meta">(Auto)stitching and Photo Mosaics</p>
     </header>
 
+    <section>
+      <h2>Overview</h2>
+      <p class="section-desc" data-key="overview"></p>
+    </section>
+
+    <section class="part-header">
+      <h2>Part A: Image Warping and Mosaicing</h2>
+    </section>
+
+    <!-- ===== A.1 Shoot the Pictures ===== -->
+
+    <section>
+      <h2>A.1 Shoot the Pictures</h2>
+      <div class="section-desc" data-key="shoot-intro"></div>
+
+      <h3>Building</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj4/elaichi-sources.jpg" alt="Three photos of an office building facade, panning from left to right" width="1600" height="699">
+        <figcaption>Outside Elaichi</figcaption>
+      </figure>
+
+      <h3>Café</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj4/cafe-sources.jpg" alt="Two photos of a café interior, panning from the counter toward the shelves" width="1600" height="592">
+        <figcaption>Chud roommate</figcaption>
+      </figure>
+
+      <h3>Bedroom</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj4/bedroom-sources.jpg" alt="Three photos of a bedroom wall with a poster, panning from left to right" width="1600" height="699">
+        <figcaption>My roommate's wall</figcaption>
+      </figure>
+      <div class="section-desc" data-key="shoot-notes"></div>
+    </section>
+
+    <!-- ===== A.2 Recover Homographies ===== -->
+
+    <section>
+      <h2>A.2 Recover Homographies</h2>
+      <div class="section-desc" data-key="homography-intro"></div>
+
+      <div class="math-block">
+        $$
+        \begin{bmatrix} wx' \\ wy' \\ w \end{bmatrix} =
+        \begin{bmatrix} a & b & c \\ d & e & f \\ g & h & 1 \end{bmatrix}
+        \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}
+        \quad\Longrightarrow\quad
+        x' = \frac{ax + by + c}{gx + hy + 1}, \qquad
+        y' = \frac{dx + ey + f}{gx + hy + 1}
+        $$
+        $$
+        \begin{bmatrix}
+          x_1 & y_1 & 1 & 0 & 0 & 0 & -x_1 x_1' & -y_1 x_1' \\
+          0 & 0 & 0 & x_1 & y_1 & 1 & -x_1 y_1' & -y_1 y_1' \\
+          \vdots & & & & & & & \vdots \\
+          x_n & y_n & 1 & 0 & 0 & 0 & -x_n x_n' & -y_n x_n' \\
+          0 & 0 & 0 & x_n & y_n & 1 & -x_n y_n' & -y_n y_n'
+        \end{bmatrix}
+        \begin{bmatrix} a \\ b \\ c \\ d \\ e \\ f \\ g \\ h \end{bmatrix}
+        =
+        \begin{bmatrix} x_1' \\ y_1' \\ \vdots \\ x_n' \\ y_n' \end{bmatrix}
+        $$
+      </div>
+
+      <div class="section-desc" data-key="correspondence-tool"></div>
+
+      <h3>Building</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj4/corr-elaichi-1-2.jpg" alt="12 correspondences between the first two Elaichi photos, spread across the facade" width="1600" height="700">
+        <figcaption>Correspondence points</figcaption>
+      </figure>
+      <div class="math-block">
+        $$H_{1 \to 2} = \begin{bmatrix} 1.514 & -0.1725 & -2167 \\ 0.533 & 1.315 & -1482 \\ 1.266 \times 10^{-4} & -6.993 \times 10^{-6} & 1 \end{bmatrix}$$
+      </div>
+      <figure class="figure-wide">
+        <img src="../images/proj4/corr-elaichi-2-3.jpg" alt="12 correspondences between the second and third Elaichi photos" width="1600" height="700">
+        <figcaption>Correspondence points</figcaption>
+      </figure>
+      <div class="math-block">
+        $$H_{2 \to 3} = \begin{bmatrix} 1.43 & -0.1532 & -1725 \\ 0.4319 & 1.245 & -1189 \\ 1.061 \times 10^{-4} & -8.888 \times 10^{-6} & 1 \end{bmatrix}$$
+      </div>
+
+      <h3>Café</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj4/corr-cafe-1-2.jpg" alt="12 correspondences between the two café photos on the back wall, lamps, and counter" width="1600" height="700">
+        <figcaption>Correspondence points</figcaption>
+      </figure>
+      <div class="math-block">
+        $$H_{1 \to 2} = \begin{bmatrix} 1.748 & -0.204 & -5049 \\ 0.4386 & 1.414 & -1662 \\ 1.5 \times 10^{-4} & -7.181 \times 10^{-5} & 1 \end{bmatrix}$$
+      </div>
+
+      <h3>Bedroom</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj4/corr-bedroom-1-2.jpg" alt="10 correspondences on the poster between the first two bedroom photos" width="1600" height="700">
+        <figcaption>Correspondence points</figcaption>
+      </figure>
+      <div class="math-block">
+        $$H_{1 \to 2} = \begin{bmatrix} 1.21 & 0.005638 & -987.7 \\ 0.1394 & 1.132 & -378.3 \\ 4.929 \times 10^{-5} & 1.531 \times 10^{-6} & 1 \end{bmatrix}$$
+      </div>
+      <figure class="figure-wide">
+        <img src="../images/proj4/corr-bedroom-2-3.jpg" alt="10 correspondences on the poster between the second and third bedroom photos" width="1600" height="700">
+        <figcaption>Correspondence points</figcaption>
+      </figure>
+      <div class="math-block">
+        $$H_{2 \to 3} = \begin{bmatrix} 1.484 & 0.02496 & -2216 \\ 0.2762 & 1.354 & -1121 \\ 1.01 \times 10^{-4} & 1.274 \times 10^{-5} & 1 \end{bmatrix}$$
+      </div>
+      <div class="section-desc" data-key="homography-results"></div>
+    </section>
+
+    <!-- ===== A.3 Warp the Images ===== -->
+
+    <section>
+      <h2>A.3 Warp the Images</h2>
+      <div class="section-desc" data-key="warp-intro"></div>
+
+      <h3>Synthetic test</h3>
+      <div class="section-desc" data-key="rectify-synthetic"></div>
+      <figure class="figure-wide">
+        <img src="../images/proj4/rectify-synthetic.jpg" alt="A white square on black warped into three perspective views, each rectified back to the original square with nearest neighbor and bilinear" width="1369" height="1236">
+        <figcaption>Each row: perspective input, nearest neighbor rectification, bilinear rectification</figcaption>
+      </figure>
+
+      <h3>Rectification</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj4/rectify-elaichi-3.jpg" alt="Facade window photographed from below at an angle, outlined in red, and the rectified result with nearest neighbor and bilinear" width="1600" height="519">
+        <figcaption>Elaichi window: original with the four corners marked, nearest neighbor, bilinear. Warped to a \(500 \times 550\) rectangle</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj4/rectify-cafe-1.jpg" alt="Picture frame on a café side wall, outlined in red, and the rectified result with nearest neighbor and bilinear" width="1600" height="622">
+        <figcaption>Café picture frame: original with the four corners marked, nearest neighbor, bilinear. Warped to a \(400 \times 500\) rectangle</figcaption>
+      </figure>
+      <div class="section-desc" data-key="rectify-results"></div>
+
+      <h3>Nearest neighbor vs. bilinear</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj4/rectify-zoom.jpg" alt="Zoomed crop of the rectified window frame: nearest neighbor has jagged edges, bilinear is smooth" width="1224" height="492">
+        <figcaption>3&times; zoom on the rectified Elaichi window</figcaption>
+      </figure>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr><th>Warp</th><th>Nearest neighbor</th><th>Bilinear</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Synthetic square (\(400 \times 400\) output, grayscale)</td><td>0.005 s</td><td>0.008 s</td></tr>
+            <tr><td>Elaichi window (\(1001 \times 1101\) output)</td><td>0.074 s</td><td>0.174 s</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="section-desc" data-key="interp-comparison"></div>
+    </section>
+
+    <!-- ===== A.4 Blend the Images into a Mosaic ===== -->
+
+    <section>
+      <h2>A.4 Blend the Images into a Mosaic</h2>
+      <div class="section-desc" data-key="mosaic-intro"></div>
+
+      <div class="figure-row">
+        <figure>
+          <img src="../images/proj4/center-weight.jpg" alt="Grayscale weight map, white at the center fading linearly to black at the edges" width="300" height="400">
+          <figcaption>Per-image alpha before warping</figcaption>
+        </figure>
+      </div>
+
+      <h3>Building</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj4/elaichi-sources.jpg" alt="The three building source photos" width="1600" height="699">
+        <figcaption>Source images</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj4/elaichi-blend.jpg" alt="Building mosaic from three photos, two-band blended" width="1600" height="1221">
+        <figcaption>Mosaic, two-band blending (middle photo as the reference)</figcaption>
+      </figure>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj4/elaichi-noblend.jpg" alt="Building mosaic with no blending" width="1600" height="1221">
+          <figcaption>No blending</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj4/elaichi-feather.jpg" alt="Building mosaic with feathering" width="1600" height="1221">
+          <figcaption>Feathering</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="mosaic-building"></div>
+
+      <h3>Café</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj4/cafe-sources.jpg" alt="The two café source photos" width="1600" height="592">
+        <figcaption>Source images</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj4/cafe-blend.jpg" alt="Café mosaic from two photos, two-band blended" width="1600" height="947">
+        <figcaption>Mosaic, two-band blending (left photo as the reference)</figcaption>
+      </figure>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj4/cafe-noblend.jpg" alt="Café mosaic with no blending" width="1600" height="947">
+          <figcaption>No blending</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj4/cafe-feather.jpg" alt="Café mosaic with feathering" width="1600" height="947">
+          <figcaption>Feathering</figcaption>
+        </figure>
+      </div>
+      <figure class="figure-wide">
+        <img src="../images/proj4/cafe-blend-zoom.jpg" alt="Crop of the café mosaic: feathering shows a transparent double of the person in the foreground, two-band does not" width="1600" height="494">
+        <figcaption>Close-up of the overlap: no blending, feathering, two-band</figcaption>
+      </figure>
+      <div class="section-desc" data-key="mosaic-cafe"></div>
+
+      <h3>Bedroom</h3>
+      <figure class="figure-wide">
+        <img src="../images/proj4/bedroom-sources.jpg" alt="The three bedroom source photos" width="1600" height="699">
+        <figcaption>Source images</figcaption>
+      </figure>
+      <figure class="figure-wide">
+        <img src="../images/proj4/bedroom-blend.jpg" alt="Bedroom mosaic from three photos, two-band blended" width="1600" height="1577">
+        <figcaption>Mosaic, two-band blending (middle photo as the reference)</figcaption>
+      </figure>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj4/bedroom-noblend.jpg" alt="Bedroom mosaic with no blending, showing visible brightness seams on the wall" width="1600" height="1577">
+          <figcaption>No blending</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj4/bedroom-feather.jpg" alt="Bedroom mosaic with feathering" width="1600" height="1577">
+          <figcaption>Feathering</figcaption>
+        </figure>
+      </div>
+      <figure class="figure-wide">
+        <img src="../images/proj4/bedroom-blend-zoom.jpg" alt="Crop of the bedroom wall: no blending shows hard brightness seams, feathering and two-band are smooth" width="1600" height="492">
+        <figcaption>Close-up of the wall: no blending, feathering, two-band</figcaption>
+      </figure>
+      <div class="section-desc" data-key="mosaic-bedroom"></div>
+    </section>
+
+    <section>
+      <h2>What I Learned</h2>
+      <p class="section-desc" data-key="learned"></p>
+    </section>
+
   </main>
 
+  <script src="content.js"></script>
   <script src="../script.js"></script>
 </body>
 </html>

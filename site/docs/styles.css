@@ -497,3 +497,10 @@ section > * + h3 { margin-top: 32px; }
   font-size: 1.6rem;
   border-bottom-width: 2px;
 }
+
+/* Display math (KaTeX); wide equations scroll instead of overflowing */
+.math-block {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 0 0 24px;
+}

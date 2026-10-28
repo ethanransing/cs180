@@ -11,3 +11,5 @@ proj1/*.txt
 proj2/data/
 proj2/part*/
 __pycache__/
+proj4/assets/
+proj4/out/
