@@ -279,8 +279,103 @@
       <div class="section-desc" data-key="mosaic-bedroom"></div>
     </section>
 
+    <section class="part-header">
+      <h2>Part B: Feature Matching for Autostitching</h2>
+      <div class="section-desc" data-key="part-b-intro"></div>
+    </section>
+
+    <!-- ===== B.1 Harris Corner Detection ===== -->
+
     <section>
-      <h2>What I Learned</h2>
+      <h2>B.1 Harris Corner Detection</h2>
+      <div class="section-desc" data-key="harris-intro"></div>
+
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj4/harris-elaichi-1.jpg" alt="Left building photo covered in tens of thousands of red Harris corner dots, densest in the trees and windows" width="1125" height="1500">
+          <figcaption>All Harris corners</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj4/anms-elaichi-1.jpg" alt="The same photo with 1000 red corners spread evenly across the facade after ANMS" width="1125" height="1500">
+          <figcaption>After ANMS w/ 1,000 points</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="anms-results"></div>
+    </section>
+
+    <!-- ===== B.2 Feature Descriptor Extraction ===== -->
+
+    <section>
+      <h2>B.2 Feature Descriptor Extraction</h2>
+      <div class="section-desc" data-key="descriptor-intro"></div>
+
+      <figure class="figure-wide">
+        <img src="../images/proj4/descriptors-elaichi-1.jpg" alt="Eight 40 by 40 grayscale windows around corners on the building, each above its blurred, normalized 8 by 8 descriptor" width="1260" height="358">
+        <figcaption>Top: 40x40 window around a Harris corner. Bottom: the blurred and normalized 8x8 feature descriptor</figcaption>
+      </figure>
+      <div class="section-desc" data-key="descriptor-results"></div>
+    </section>
+
+    <!-- ===== B.3 Feature Matching ===== -->
+
+    <section>
+      <h2>B.3 Feature Matching</h2>
+      <div class="section-desc" data-key="matching-intro"></div>
+
+      <figure class="figure-wide">
+        <img src="../images/proj4/matches-elaichi-1-2.jpg" alt="The first two building photos side by side with yellow lines connecting 170 matched features" width="1600" height="1066">
+        <figcaption>Matched feature pairs between the two building photos</figcaption>
+      </figure>
+      <div class="section-desc" data-key="matching-results"></div>
+    </section>
+
+    <!-- ===== B.4 RANSAC for Robust Homography ===== -->
+
+    <section>
+      <h2>B.4 RANSAC for Robust Homography</h2>
+      <div class="section-desc" data-key="ransac-intro"></div>
+
+      <h3>Building</h3>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj4/elaichi-blend.jpg" alt="Building mosaic stitched from hand-picked correspondences" width="1600" height="1221">
+          <figcaption>Manual</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj4/elaichi-auto-blend.jpg" alt="Building mosaic stitched automatically" width="1600" height="1240">
+          <figcaption>Automatic</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="auto-building"></div>
+
+      <h3>Café</h3>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj4/cafe-blend.jpg" alt="Café mosaic stitched from hand-picked correspondences" width="1600" height="947">
+          <figcaption>Manual</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj4/cafe-auto-blend.jpg" alt="Café mosaic stitched automatically, with the right photo stretched much more than in the manual version" width="1600" height="1150">
+          <figcaption>Automatic</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="auto-cafe"></div>
+
+      <h3>Bedroom</h3>
+      <div class="figure-grid">
+        <figure>
+          <img src="../images/proj4/bedroom-blend.jpg" alt="Bedroom mosaic stitched from hand-picked correspondences" width="1600" height="1577">
+          <figcaption>Manual</figcaption>
+        </figure>
+        <figure>
+          <img src="../images/proj4/bedroom-auto-blend.jpg" alt="Bedroom mosaic stitched automatically" width="1600" height="1570">
+          <figcaption>Automatic</figcaption>
+        </figure>
+      </div>
+      <div class="section-desc" data-key="auto-bedroom"></div>
+    </section>
+
+    <section>
       <p class="section-desc" data-key="learned"></p>
     </section>
 

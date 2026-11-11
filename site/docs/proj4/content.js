@@ -48,6 +48,41 @@ window.PROJECT_CONTENT = {
   // Under the bedroom mosaic and close-up: exposure seams.
   "mosaic-bedroom": "",
 
+  // ===== Part B =====
+  // Under the Part B header: the goal (stitch automatically, no hand-picked
+  // points), following Brown et al.'s MOPS paper with simplifications.
+  "part-b-intro": "",
+
+  // ===== B.1 Harris Corner Detection =====
+  // Above the corner figures: single-scale Harris (provided harris.py), and
+  // how ANMS picks strong corners that are spread evenly over the image.
+  "harris-intro": "",
+  // Under the figures: Harris corners vs. ANMS corners.
+  "anms-results": "",
+
+  // ===== B.2 Feature Descriptor Extraction =====
+  // Above the figure: axis-aligned 8x8 patches sampled from a blurred 40x40
+  // window, then bias/gain-normalized.
+  "descriptor-intro": "",
+  // Under the figure: anything notable about the descriptors.
+  "descriptor-results": "",
+
+  // ===== B.3 Feature Matching =====
+  // Above the figure: Lowe's ratio test on 1-NN / 2-NN distance, and the
+  // threshold chosen with Figure 6b of the paper.
+  "matching-intro": "",
+  // Under the figure: what the matches look like and how many are wrong.
+  "matching-results": "",
+
+  // ===== B.4 RANSAC for Robust Homography =====
+  // Above the comparisons: 4-point RANSAC, inlier threshold, refit on the
+  // largest inlier set.
+  "ransac-intro": "",
+  // Under each manual vs. automatic comparison.
+  "auto-building": "",
+  "auto-cafe": "",
+  "auto-bedroom": "",
+
   // ===== What I Learned =====
-  learned: "I learned that a homography's quality depends a lot on where the correspondences are, not just how precise they are -- points bunched in one spot fit perfectly there and fall apart everywhere else. I also got a better feel for the limits of the model. A homography is exact for a flat scene or a camera that only rotates, so anything at a different depth (or anything that moves between shots) will never line up, no matter how good the points are!"
+  learned: "I learned that with Harris corners for automatic correspondence points, I actually got better resulting mosaics! Intuitively, the Harris algorithm chooses points that I chose (literal corners on windows, centers of lamps, etc.), though I suspect that it was better at more accurate at selecting these points compared to me with my trackpad leading to better results. I also attribute the better autostitching results with a better distribution of features across the whole image -- my manual correspondence points left much to be desired especially in the cafe photo."
 };
